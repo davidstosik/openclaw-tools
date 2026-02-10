@@ -6,7 +6,8 @@ Public collection of skills and scripts for OpenClaw.
 
 ```
 openclaw-tools/
-├── project-tracker/           # Skill: Track life projects with context
+├── skills/
+│   └── project-tracker/       # Track life projects with context
 └── scripts/
     └── rate-limit-auto-switch/  # Auto-failover when Claude hits rate limits
 ```
