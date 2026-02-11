@@ -1,0 +1,91 @@
+{
+  "name": "血液検査予約エージェント",
+  "transcriber": {
+    "provider": "deepgram",
+    "language": "ja",
+    "model": "nova-2-general"
+  },
+  "model": {
+    "provider": "anthropic",
+    "model": "claude-3-haiku-20240307",
+    "temperature": 0.7,
+    "maxTokens": 500,
+    "messages": [
+      {
+        "role": "system",
+        "content": "あなたは{{patientName}}様の代理で{{clinicName}}に血液検査の予約を取るアシスタントです。\n\n# 目標\n血液検査の予約を取る\n\n# 患者情報\n- 名前: {{patientName}}\n- 希望日: {{preferredDate}}\n- 目的: {{purpose}}\n\n# 会話の手順\n1. 丁寧に挨拶する\n2. 血液検査の予約を希望することを伝える\n3. 患者の名前を伝える（フルネームで）\n4. 希望日を伝える\n5. 利用可能な時間帯を確認する\n6. 最適な時間を選び、予約を確定する\n7. 必要な準備（空腹、服薬など）を確認する\n8. 予約内容を復唱して確認する\n9. お礼を言って丁寧に電話を切る\n\n# 会話のトーン\n- 非常に丁寧で礼儀正しい\n- 明確で簡潔\n- プロフェッショナル\n- 日本のビジネスマナーに従う\n\n# 重要な注意事項\n- 相手の話を最後まで聞く\n- 早口にならない\n- 専門用語は使わない\n- 予約が取れない場合は、他の日程を提案する\n- 不明な点があれば、必ず確認する"
+      }
+    ]
+  },
+  "voice": {
+    "provider": "azure",
+    "voiceId": "ja-JP-NanamiNeural",
+    "speed": 0.95
+  },
+  "firstMessage": "もしもし、{{clinicName}}様でしょうか。{{patientName}}の代理でお電話しております。血液検査の予約をお願いしたいのですが、よろしいでしょうか。",
+  "endCallPhrases": [
+    "ありがとうございました",
+    "失礼いたします",
+    "では、よろしくお願いいたします"
+  ],
+  "endCallMessage": "ご対応ありがとうございました。失礼いたします。",
+  "maxDurationSeconds": 600,
+  "voicemailDetection": {
+    "enabled": true,
+    "provider": "twilio"
+  },
+  "analysisPlan": {
+    "structuredDataPlan": {
+      "enabled": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "予約が成功したかどうか"
+          },
+          "appointmentDate": {
+            "type": "string",
+            "description": "予約日 (YYYY-MM-DD形式)"
+          },
+          "appointmentTime": {
+            "type": "string",
+            "description": "予約時間 (HH:MM形式)"
+          },
+          "specialInstructions": {
+            "type": "string",
+            "description": "特別な指示や準備（例：空腹での来院、服薬の中止など）"
+          },
+          "confirmationNumber": {
+            "type": "string",
+            "description": "予約番号または受付番号"
+          },
+          "contactPerson": {
+            "type": "string",
+            "description": "対応してくれた受付担当者の名前"
+          },
+          "additionalNotes": {
+            "type": "string",
+            "description": "その他の重要な情報"
+          },
+          "alternativeDateOffered": {
+            "type": "string",
+            "description": "希望日が取れなかった場合に提案された日時"
+          }
+        },
+        "required": ["success"]
+      },
+      "timeoutSeconds": 10
+    },
+    "summaryPlan": {
+      "enabled": true,
+      "messages": [
+        {
+          "role": "system",
+          "content": "以下の通話内容を簡潔に要約してください。予約の結果、日時、重要な指示を含めてください。"
+        }
+      ],
+      "timeoutSeconds": 5
+    }
+  }
+}

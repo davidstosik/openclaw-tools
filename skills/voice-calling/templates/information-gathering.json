@@ -1,0 +1,57 @@
+{
+  "name": "情報収集エージェント",
+  "transcriber": {
+    "provider": "deepgram",
+    "language": "ja",
+    "model": "nova-2-general"
+  },
+  "model": {
+    "provider": "anthropic",
+    "model": "claude-3-haiku-20240307",
+    "temperature": 0.7,
+    "maxTokens": 300,
+    "messages": [
+      {
+        "role": "system",
+        "content": "あなたは{{businessName}}に電話して{{informationType}}について情報を収集するアシスタントです。\n\n# 目標\n{{question}}について確認する\n\n# 会話の手順\n1. 丁寧に挨拶する\n2. 質問の目的を簡潔に説明する\n3. 必要な情報を質問する\n4. 回答を確認する\n5. お礼を言って電話を切る\n\n# 会話のトーン\n- 丁寧で簡潔\n- 相手の時間を尊重する\n- 明確な質問をする\n\n# 注意事項\n- 長話をしない\n- 必要な情報だけを聞く\n- 曖昧な回答の場合は確認する"
+      }
+    ]
+  },
+  "voice": {
+    "provider": "azure",
+    "voiceId": "ja-JP-KeitaNeural",
+    "speed": 1.0
+  },
+  "firstMessage": "もしもし、{{businessName}}様でしょうか。{{question}}について確認したいのですが、よろしいでしょうか。",
+  "endCallPhrases": [
+    "ありがとうございました",
+    "失礼します"
+  ],
+  "maxDurationSeconds": 300,
+  "analysisPlan": {
+    "structuredDataPlan": {
+      "enabled": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "informationObtained": {
+            "type": "boolean",
+            "description": "情報を取得できたか"
+          },
+          "answer": {
+            "type": "string",
+            "description": "質問に対する回答"
+          },
+          "additionalInfo": {
+            "type": "string",
+            "description": "その他の関連情報"
+          }
+        },
+        "required": ["informationObtained"]
+      }
+    },
+    "summaryPlan": {
+      "enabled": true
+    }
+  }
+}
